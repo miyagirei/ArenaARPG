@@ -5,13 +5,20 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]float _mainSpeed;
+    [SerializeField] float _defaultSpeed;
+    [SerializeField] float _backSpeed;
     [SerializeField] Animator anim;
     Rigidbody _rb;
     Vector3 _moveDirection;
     Quaternion _rotation;
     [SerializeField] float _rotationSpeed;
 
-    int _attackStep = 0;
+    [Header("swordAnimation")]
+    [SerializeField] string[] swordAnim;
+    [SerializeField] float[] swordAnimCT;
+
+    //[SerializeField] string[] shieldAnim;
+    //[SerializeField] float[] shieldAinmCT;
 
     private void Awake()
     {
@@ -21,6 +28,7 @@ public class PlayerController : MonoBehaviour
     {
         MoveInput();
         AttackSword();
+        GuardShield();
     }
 
     void MoveInput()
@@ -40,19 +48,59 @@ public class PlayerController : MonoBehaviour
             _rotation = Quaternion.LookRotation(moveForward);
             transform.rotation = Quaternion.Lerp(transform.rotation, _rotation, _rotationSpeed * Time.deltaTime);
         }
+
+        if (Input.GetAxis("Vertical") >= 1)
+        {
+            anim.SetBool("MoveF", true);
+            anim.SetBool("MoveB", false);
+            _mainSpeed = _defaultSpeed;
+        }
+        else if(Input.GetAxis("Vertical") <= -1){
+            anim.SetBool("MoveB", true);
+            anim.SetBool("MoveF", false);
+            _mainSpeed = _backSpeed;
+        }
+        else
+        {
+            anim.SetBool("MoveF", false);
+            anim.SetBool("MoveB", false);
+            _mainSpeed = _defaultSpeed;
+        }
     }
     void AttackSword()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            StartCoroutine(AnimationFinish(1f , "AttackSword"));
+            StartCoroutine(DoubleAttackAnim(swordAnim[0],swordAnimCT[0],KeyCode.Mouse0,swordAnim[1],swordAnimCT[1]));
         }
     }
 
-    IEnumerator AnimationFinish(float time, string trans)
+    IEnumerator DoubleAttackAnim(string trans,float time,  KeyCode key, string next,float nextTime)
     {
         anim.SetBool(trans, true);
         yield return new WaitForSeconds(time);
-        anim.SetBool(trans, false);
+        if (Input.GetKey(key)){
+            anim.SetBool(next, true);
+            yield return new WaitForSeconds(nextTime);
+            anim.SetBool(next, false);
+            anim.SetBool(trans, false);
+        }
+        else
+        {
+            anim.SetBool(trans, false);
+        }
+
+    }
+
+    void GuardShield()
+    {
+        if (Input.GetKey(KeyCode.Mouse1))
+        {
+            anim.SetBool("Guard", true);
+        }
+        else
+        {
+            anim.SetBool("Guard", false);
+        }
     }
 }
