@@ -6,6 +6,7 @@ public class PlayerCamera : MonoBehaviour
 {
     public Transform _bodyAxis;
     public Transform _headAxis;
+    public Transform[] _chest;
     public static float _xSence = 300.0f;
     public static float _ySence = 300.0f;
     public float _limitXAxizAngle = 30;
@@ -28,6 +29,8 @@ public class PlayerCamera : MonoBehaviour
         {
             _mXAxiz.x = x;
             _headAxis.localEulerAngles = _mXAxiz;
+            _chest[0].localEulerAngles = _mXAxiz;
+            _chest[1].localEulerAngles = _mXAxiz;
         }
     }
 

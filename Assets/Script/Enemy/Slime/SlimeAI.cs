@@ -13,6 +13,8 @@ public class SlimeAI : MonoBehaviour
     [SerializeField] float _attackRange;
     float distance;
 
+    [SerializeField] Animator _slimeAnim;
+
     private void Awake()
     {
         _nMA = GetComponent<NavMeshAgent>();
